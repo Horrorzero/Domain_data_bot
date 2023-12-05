@@ -2,6 +2,10 @@ from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
+from db import add_user
+
+
+
 router = Router()
 
 @router.message(CommandStart())
@@ -15,3 +19,5 @@ async def start(message: Message):
     await message.answer(
         text='\n'.join(lines),
     )
+    
+    await add_user(message.from_user.id,message.from_user.username)

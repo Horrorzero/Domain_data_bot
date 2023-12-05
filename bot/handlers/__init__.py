@@ -8,6 +8,8 @@ from aiogram.filters import Command
 from bot.handlers.start import router as start_router
 from bot.handlers.checker import router as checker_router
 
+from db import add_domains
+
 router = Router()
 
 router.include_routers(start_router, checker_router)
@@ -19,7 +21,7 @@ async def time_left(message: Message):
     @router.message(F.text.contains('com') | F.text.contains('org') | F.text.contains('ua'))
     async def site(message:Message):
         try:
-            result =asyncwhois.whois_domain(message.text)
+            result = asyncwhois.whois_domain(message.text)
 
             expires = datetime.strptime((result.parser_output['expires']).strftime("%Y/%m/%d %H:%M:%S"),"%Y/%m/%d %H:%M:%S")
             created = datetime.strptime((result.parser_output["created"]).strftime("%Y/%m/%d %H:%M:%S"),"%Y/%m/%d %H:%M:%S")
@@ -45,7 +47,7 @@ async def time_left(message: Message):
             ]
             
             await message.answer(text='\n'.join(lines))
-        except:
+        except Exception as e:
             await message.answer(text='Не вдалося знайти данні :( \nСпробуйте ще раз або введіть інший домен!')
 
 
@@ -58,6 +60,17 @@ async def about(message:Message):
     ]
     await message.answer(text='\n'.join(lines),)
     
+
 @router.message(Command(commands=['reminder']))
 async def reminder(message:Message):
-    pass
+    await message.answer(text='Введіть один або декілька доменів через пробіл для подальшого нагадування')
+    
+    @router.message(F.text.contains('com') | F.text.contains('org') | F.text.contains('ua'))
+    async def domains(message:Message): 
+        domains = str(set((message.text).split()))
+        try:
+            await add_domains(domains,message.from_user.username)
+            await message.answer(text='Данні успішно записано! \n У разі чого Ви можте змінити ваш список ввівши команду /reminder')
+        except Exception as e:
+            await message.answer(text='Не вдалося \nНе правильний формат вводу!')
+            print(e)

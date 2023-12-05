@@ -1,3 +1,5 @@
 __pycache__
 .venv
-bot/config.py
+.env
+config/config.py
+alembic/env.py
