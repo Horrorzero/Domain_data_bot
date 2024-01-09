@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.base import Base
@@ -11,7 +11,7 @@ class User(Base):
 
 	id: Mapped[int] = mapped_column(primary_key=True)
 
-	tg_id: Mapped[int] = mapped_column(Integer, unique=True)
+	tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
 	username: Mapped[str] = mapped_column(String, unique=True)
 
 	domains: Mapped[list[Domain]] = relationship(

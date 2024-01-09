@@ -8,11 +8,11 @@ async def add_user(user_tg_id,username):
 		user_query = select(func.count('*')).where(User.tg_id == user_tg_id)
 		user_matched_count: int = (await session.execute(user_query)).scalar()
 
-	if user_matched_count == 0:
-		user_db_instance = User(
-			username = username,
-			tg_id = user_tg_id,
-		)
+		if user_matched_count == 0:
+			user_db_instance = User(
+				username = username,
+				tg_id = user_tg_id,
+			)
 
 		session.add(user_db_instance)
 		await session.commit()

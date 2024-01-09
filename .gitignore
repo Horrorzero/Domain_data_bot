@@ -2,4 +2,5 @@ __pycache__
 .venv
 .env
 config/config.py
-alembic/env.py
+migrations
+alembic

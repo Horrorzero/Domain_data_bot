@@ -19,5 +19,7 @@ async def start(message: Message):
     await message.answer(
         text='\n'.join(lines),
     )
+    print(f'{message.from_user.username}!!!!!')
+    print(f'{message.from_user.id}!!!!!')
     
     await add_user(message.from_user.id,message.from_user.username)

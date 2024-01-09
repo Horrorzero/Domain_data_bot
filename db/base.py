@@ -17,7 +17,7 @@ def async_session_generator():
     return sessionmaker[AsyncSession](
         engine,
         class_=AsyncSession,
-        expire_on_commit=False
+        expire_on_commit=False,
     )
         
 @asynccontextmanager
