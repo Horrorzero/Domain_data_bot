@@ -9,7 +9,7 @@ from bot.utils.translations import translations
 
 async def add_user(user_tg_id, username):
     async with get_session() as session:
-        user_query = select(func.count('*')).where(User.tg_id == user_tg_id)
+        user_query = select(func.count('*')).where(User.username == username)
         user_matched_count: int = (await session.execute(user_query)).scalar()
 
         if user_matched_count == 0:

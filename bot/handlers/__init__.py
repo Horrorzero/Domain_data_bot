@@ -9,9 +9,9 @@ from bot.handlers.reminder import router as reminder_router
 router = Router()
 
 router.include_routers(
+    start_router,
     reminder_router,
     info_router,
-    start_router,
     help_router,
     checker_router
 )
