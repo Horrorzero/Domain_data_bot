@@ -1,2 +1,5 @@
 # Domen_data_bot
-Bot where u can receive data about any domen
+Bot where you can receive data about any domen
+
+To launch bot you need enter 'python -m bot'
+
