@@ -27,7 +27,7 @@ class Domain(Base):
 	__tablename__ = 'domain'
 
 	id: Mapped[int] = mapped_column(primary_key=True)
-	name: Mapped[str] = mapped_column(String, unique=True)
+	name: Mapped[str] = mapped_column(String, unique=False)
 
 	user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
 	user: Mapped[User] = relationship(back_populates='domains')
