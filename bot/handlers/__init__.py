@@ -1,76 +1,17 @@
-import asyncwhois
-from datetime import *
+from aiogram import Router
 
-from aiogram import Router,F
-from aiogram.types import Message
-from aiogram.filters import Command
-
-from bot.handlers.start import router as start_router
 from bot.handlers.checker import router as checker_router
-
-from db import add_domains
+from bot.handlers.help import router as help_router
+from bot.handlers.start import router as start_router
+from bot.handlers.all_info import router as info_router
+from bot.handlers.reminder import router as reminder_router
 
 router = Router()
 
-router.include_routers(start_router, checker_router)
-
-@router.message(Command(commands=['all_info']))
-async def time_left(message: Message):
-    await message.answer(text='Введіть домен сайту')
-    
-    @router.message(F.text.contains('com') | F.text.contains('org') | F.text.contains('ua'))
-    async def site(message:Message):
-        try:
-            result = asyncwhois.whois_domain(message.text)
-
-            expires = datetime.strptime((result.parser_output['expires']).strftime("%Y/%m/%d %H:%M:%S"),"%Y/%m/%d %H:%M:%S")
-            created = datetime.strptime((result.parser_output["created"]).strftime("%Y/%m/%d %H:%M:%S"),"%Y/%m/%d %H:%M:%S")
-            updated = datetime.strptime((result.parser_output["updated"]).strftime("%Y/%m/%d %H:%M:%S"),"%Y/%m/%d %H:%M:%S")
-
-       
-            print(result.parser_output)
-       
-            if type(result.parser_output['expires']) == list:
-                date = result.parser_output['expires'][0]-datetime.now()
-            else:
-                date = expires-datetime.now()
-
-            lines = [
-                f'Данні домена {message.text}',
-                f'Днів до кінця дії : {date.days}',
-                f'Дата створення : {created}',
-                f'Дата оновлення : {updated}',
-                f'Хостинг домену : {result.parser_output["registrar_url"]}',
-                f'Компанія хостингу : {result.parser_output["registrar"]}',
-                f'Країна реєстрації : {result.parser_output["registrant_country"]}',
-                f'Номер хостингу : {result.parser_output["registrar_abuse_phone"]}'
-            ]
-            
-            await message.answer(text='\n'.join(lines))
-        except Exception as e:
-            await message.answer(text='Не вдалося знайти данні :( \nСпробуйте ще раз або введіть інший домен!')
-
-
-@router.message(Command(commands=['about']))
-async def about(message:Message):
-    lines = [
-        "Я - Domen Bot, тут Ви можете дізнатися інформацію про введений домен",
-        "Щоб дізнатися інформацію про домен введіть /all_info",   
-        "Щоб нагадати строк кінця домена або доменів введіть /reminder"
-    ]
-    await message.answer(text='\n'.join(lines),)
-    
-
-@router.message(Command(commands=['reminder']))
-async def reminder(message:Message):
-    await message.answer(text='Введіть один або декілька доменів через пробіл для подальшого нагадування')
-    
-    @router.message(F.text.contains('com') | F.text.contains('org') | F.text.contains('ua'))
-    async def domains(message:Message): 
-        domains = str(set((message.text).split()))
-        try:
-            await add_domains(domains,message.from_user.username)
-            await message.answer(text='Данні успішно записано! \n У разі чого Ви можте змінити ваш список ввівши команду /reminder')
-        except Exception as e:
-            await message.answer(text='Не вдалося \nНе правильний формат вводу!')
-            print(e)
+router.include_routers(
+    reminder_router,
+    info_router,
+    start_router,
+    help_router,
+    checker_router
+)
