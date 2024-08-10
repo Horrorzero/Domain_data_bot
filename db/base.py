@@ -13,13 +13,15 @@ load_dotenv()
 engine = create_async_engine(os.environ.get('DB_URL'), echo=True)
 Base = declarative_base()
 
+
 def async_session_generator():
     return sessionmaker[AsyncSession](
         engine,
         class_=AsyncSession,
         expire_on_commit=False,
     )
-        
+
+
 @asynccontextmanager
 async def get_session() -> AsyncIterator[AsyncSession]:
     try:
