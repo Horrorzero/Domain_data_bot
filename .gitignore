@@ -4,3 +4,4 @@ __pycache__
 config/config.py
 migrations
 alembic
+.idea
