@@ -13,16 +13,14 @@ def show_my_domains(selected_lang: str):
 
 
 def domain_actions(lang):
-    domains_actions = InlineKeyboardBuilder()
+    actions = InlineKeyboardBuilder()
 
     delete_domains = InlineKeyboardButton(text=f'{translations[lang]["delete"]}', callback_data='delete')
     delete_all = InlineKeyboardButton(text=f'{translations[lang]["delete_all"]}', callback_data='all')
 
-    domains_actions.add(delete_domains, delete_all)
-    
-    domains_actions.adjust(2, 1)
-    
-    return domains_actions.as_markup()
+    actions.add(delete_domains, delete_all)
+
+    return actions.as_markup()
 
 
 localization = InlineKeyboardBuilder()
