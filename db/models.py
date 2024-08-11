@@ -12,7 +12,7 @@ class User(Base):
 	id: Mapped[int] = mapped_column(primary_key=True)
 
 	tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
-	username: Mapped[str] = mapped_column(String, unique=True)
+	# username: Mapped[str] = mapped_column(String, unique=True)
 
 	domains: Mapped[list[Domain]] = relationship(
 		back_populates='user',

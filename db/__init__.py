@@ -7,14 +7,13 @@ from bot.utils.logic import editor
 from bot.utils.translations import translations
 
 
-async def add_user(user_tg_id, username):
+async def add_user(user_tg_id):
     async with get_session() as session:
-        user_query = select(func.count('*')).where(User.username == username)
+        user_query = select(func.count('*')).where(User.tg_id == user_tg_id)
         user_matched_count: int = (await session.execute(user_query)).scalar()
 
         if user_matched_count == 0:
             user_db_instance = User(
-                username=username,
                 tg_id=user_tg_id,
             )
 
@@ -22,9 +21,9 @@ async def add_user(user_tg_id, username):
             await session.commit()
 
 
-async def add_domains(domains, username):
+async def add_domains(domains, user_tg_id):
     async with get_session() as session:
-        user_query_u = select(User.id).where(User.username == username)
+        user_query_u = select(User.id).where(User.tg_id == user_tg_id)
         user_matched_id = await session.execute(user_query_u)
 
         current_query_domains = select(Domain.name).where(Domain.user_id == user_query_u)
@@ -81,9 +80,9 @@ async def show_domains(tg_id):
         return domains
 
 
-async def delete_all_domains(username):
+async def delete_all_domains(user_tg_id):
     async with get_session() as session:
-        user_query = select(User.id).where(User.username == username)
+        user_query = select(User.id).where(User.tg_id == user_tg_id)
         user_result = await session.execute(user_query)
         user_id = user_result.scalar()
 
@@ -93,10 +92,10 @@ async def delete_all_domains(username):
         await session.commit()
 
 
-async def delete_domains(username, domains_to_delete, language):
+async def delete_domains(user_tg_id, domains_to_delete, language):
     async with get_session() as session:
 
-        user_id_query = select(User.id).where(User.username == username)
+        user_id_query = select(User.id).where(User.tg_id == user_tg_id)
         user_id = (await session.execute(user_id_query)).scalar()
 
         domains_query = select(Domain.name).where(Domain.user_id == user_id_query)
@@ -113,7 +112,7 @@ async def delete_domains(username, domains_to_delete, language):
                 return translations[language]['wrong_domain']
 
         if len(domains_set) == 1 or len(domains_set) == len(domains_to_delete_set):
-            await delete_all_domains(username)
+            await delete_all_domains(user_tg_id)
         else:
 
             remaining_domains = domains_set - domains_to_delete_set
